@@ -1,6 +1,7 @@
 resource "aws_iam_role" "lambda_role" {
-  name               = "${var.service_name}-lambda-role"
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume_role.json
+  count               = var.slack_required ? 1 : 0
+  name                = "${var.service_name}-lambda-role"
+  assume_role_policy  = data.aws_iam_policy_document.lambda_assume_role.json
   managed_policy_arns = ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
   inline_policy {
     name = "kms-decrypt"
