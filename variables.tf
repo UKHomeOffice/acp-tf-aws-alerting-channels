@@ -42,6 +42,7 @@ variable "slack_url" {
     description = "The slack URL to set as an environment variable within the lambda function."
     default = ""
 } 
+
 variable "slack_channel" {
     description = "The slack channel to set as an environment variable within the lambda function."
     default = ""
