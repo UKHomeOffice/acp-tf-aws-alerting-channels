@@ -1,7 +1,8 @@
 resource "aws_lambda_function" "slack_lambda" {
+  count         = var.slack_required ? 1 : 0
   filename      = data.archive_file.file.output_path
   function_name = "${var.service_name}-lambda-notify-slack"
-  role          = aws_iam_role.lambda_role.arn
+  role          = aws_iam_role.lambda_role[count.index].arn
   handler       = var.lambda_handler
 
   source_code_hash = data.archive_file.file.output_base64sha256
@@ -19,11 +20,12 @@ resource "aws_lambda_function" "slack_lambda" {
 }
 
 resource "aws_lambda_permission" "lambda_sns" {
+  count         = var.slack_required ? 1 : 0
   statement_id  = "AllowExecutionFromSNS"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.slack_lambda.function_name
+  function_name = aws_lambda_function.slack_lambda[count.index].function_name
   principal     = "sns.amazonaws.com"
-  source_arn    = aws_sns_topic.slack.arn
+  source_arn    = aws_sns_topic.slack[count.index].arn
 }
 
 data "archive_file" "file" {
