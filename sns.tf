@@ -14,22 +14,22 @@ resource "aws_sns_topic" "email" {
 }
 
 resource "aws_sns_topic_subscription" "opsgenie" {
-  count = var.opsgenie_required ? 1 : 0
+  count     = var.opsgenie_required ? 1 : 0
   topic_arn = aws_sns_topic.opsgenie[count.index].arn
-  endpoint = var.opsgenie_url
-  protocol = "https"
+  endpoint  = var.opsgenie_url
+  protocol  = "https"
 }
 
 resource "aws_sns_topic_subscription" "slack" {
-  count = var.slack_required ? 1 : 0
+  count     = var.slack_required ? 1 : 0
   topic_arn = aws_sns_topic.slack[count.index].arn
-  endpoint = aws_lambda_function.slack_lambda[count.index].arn
-  protocol = "lambda"
+  endpoint  = aws_lambda_function.slack_lambda[count.index].arn
+  protocol  = "lambda"
 }
 
 resource "aws_sns_topic_subscription" "email" {
-  count = var.email_required ? 1 : 0
+  count     = var.email_required ? 1 : 0
   topic_arn = aws_sns_topic.email[count.index].arn
-  endpoint = var.email_address
-  protocol = "email"
+  endpoint  = var.email_address
+  protocol  = "email"
 }

@@ -1,3 +1,7 @@
+locals {
+  environment_account_ids_encoded = base64encode(jsonencode(var.environments_account_ids))
+}
+
 resource "aws_lambda_function" "slack_lambda" {
   count         = var.slack_required ? 1 : 0
   filename      = data.archive_file.file.output_path
@@ -6,12 +10,13 @@ resource "aws_lambda_function" "slack_lambda" {
   handler       = var.lambda_handler
 
   source_code_hash = data.archive_file.file.output_base64sha256
-  runtime = var.runtime
-  timeout = var.timeout
+  runtime          = var.runtime
+  timeout          = var.timeout
   environment {
     variables = {
-      kmsEncryptedHookUrl = var.slack_url
-      slackChannel = var.slack_channel
+      kmsEncryptedHookUrl     = var.slack_url
+      slackChannel            = var.slack_channel
+      ENVIRONMENT_ACCOUNT_IDS = local.environment_account_ids_encoded
     }
   }
   depends_on = [
