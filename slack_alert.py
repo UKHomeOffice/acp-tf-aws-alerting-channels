@@ -78,10 +78,14 @@ def lambda_handler(event, context):
                 "fallback": "",
                 "color": "#2eb886",
                 "title": "",
-                "text": "*Description:*\n" + message["AlarmDescription"] + "*Reason:*\n" + message["NewStateReason"],
             }
         ]
     }
+
+    if message.get("AlarmDescription") is not None:
+        slack_message["attachments"][0].update({"text": "*Description:*\n" + message["AlarmDescription"] + "*Reason:*\n" + message["NewStateReason"]})
+    else:
+        slack_message["attachments"][0].update({"text": "*Reason:*\n" + message["NewStateReason"]})
 
     req = Request(HOOK_URL, json.dumps(slack_message).encode("utf-8"))
     try:
